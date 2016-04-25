@@ -1,9 +1,11 @@
 package piotrek.tumblrviewer;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,22 @@ public class PostsListFragment extends ListFragment {
 
     public static final String BLOG_NAME = "blog_name";
     private TumblrApi api;
+    private ICallback callback;
+    private ArrayAdapter<Post> adapter;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        callback = (ICallback) context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        callback = null;
+    }
 
     public static PostsListFragment newInstance(String blogName) {
 
@@ -48,7 +66,7 @@ public class PostsListFragment extends ListFragment {
     public void onViewCreated(View view, final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        final ArrayAdapter<Post> adapter = new ArrayAdapter<Post>(getContext(), R.layout.post_item, R.id.post_item_textView){
+        adapter = new ArrayAdapter<Post>(getContext(), R.layout.post_item, R.id.post_item_textView){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -67,7 +85,7 @@ public class PostsListFragment extends ListFragment {
 
                 Post post = getItem(position);
 
-                viewHolder.textView.setText(post.getCaption());
+                viewHolder.textView.setText(Html.fromHtml(post.getCaption()));
 
                 Glide.with(PostsListFragment.this)
                         .load(post.getPhotos().get(0).getAltSizes().get(0).getUrl())
@@ -111,6 +129,8 @@ public class PostsListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
+
+        callback.openUrl(adapter.getItem(position).getPostUrl());
     }
 
     static class ViewHolder{
@@ -121,5 +141,9 @@ public class PostsListFragment extends ListFragment {
             imageView = (ImageView) view.findViewById(R.id.post_item_imageView);
             textView = (TextView) view.findViewById(R.id.post_item_textView);
         }
+    }
+
+    public interface ICallback{
+        void openUrl(String url);
     }
 }
