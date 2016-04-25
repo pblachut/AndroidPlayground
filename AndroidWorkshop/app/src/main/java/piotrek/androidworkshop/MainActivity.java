@@ -10,17 +10,16 @@ public class MainActivity extends AppCompatActivity  implements FirstFragment.Ca
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Fragment fragment = new FirstFragment();
 
-        getSupportFragmentManager().beginTransaction().add(R.id.container, fragment).commit();
+        if (savedInstanceState == null){
+            Fragment fragment = new FirstFragment();
 
-        //getSupportFragmentManager().beginTransaction().remove(fragment).addToBackStack(null).commit();
-
-
+            getSupportFragmentManager().beginTransaction().add(R.id.container, fragment).commit();
+        }
     }
 
     @Override
     public void onClick() {
-        finish();
+
     }
 }

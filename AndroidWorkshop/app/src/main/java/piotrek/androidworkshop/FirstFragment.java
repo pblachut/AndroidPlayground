@@ -14,7 +14,7 @@ import android.widget.Button;
  */
 public class FirstFragment extends Fragment {
 
-
+    private int counter = 0;
 
 
     /// PRZEKAZYWANIE ACTIVITY DO FRAGMENTU !!!!
@@ -38,7 +38,7 @@ public class FirstFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(false);
+        setRetainInstance(true); // nie wyrzuca fragmentu z pamięci
     }
 
     @Nullable
@@ -51,10 +51,14 @@ public class FirstFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Button button = (Button) view.findViewById(R.id.button);
+        final Button button = (Button) view.findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                counter++;
+                String str = String.valueOf(counter);
+
+                button.setText(str);
                 callback.onClick();
             }
         });
