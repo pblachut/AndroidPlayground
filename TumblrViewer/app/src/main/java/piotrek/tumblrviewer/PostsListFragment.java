@@ -17,14 +17,25 @@ import android.widget.TextView;
 import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
 
+import javax.inject.Inject;
+
 import piotrek.tumblrviewer.Api.TumblrApi;
+import piotrek.tumblrviewer.di.DaggerTumblrComponent;
+import piotrek.tumblrviewer.di.TumblrComponent;
+import piotrek.tumblrviewer.di.TumblrModule;
 import retrofit2.*;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PostsListFragment extends ListFragment {
 
     public static final String BLOG_NAME = "blog_name";
-    private TumblrApi api;
+
+    @Inject
+    TumblrApi api;
+
+    @Inject
+    DbHelper dbHelper;
+
     private ICallback callback;
     private ArrayAdapter<Post> adapter;
 
@@ -58,8 +69,9 @@ public class PostsListFragment extends ListFragment {
 
         setRetainInstance(true);
 
-        if (api == null)
-           api = createApi();
+
+
+        TumblrApplication.component.inject(this);
     }
 
     @Override
@@ -115,15 +127,6 @@ public class PostsListFragment extends ListFragment {
                 Log.e("ERRROR", t.getMessage());
             }
         });
-    }
-
-    private TumblrApi createApi() {
-        Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("http://api.tumblr.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
-
-        return retrofit.create(TumblrApi.class);
     }
 
     @Override
