@@ -6,8 +6,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import com.bumptech.glide.DrawableTypeRequest;
+import com.bumptech.glide.Glide;
 
 import piotrek.tumblrviewer.Api.TumblrApi;
 import retrofit2.*;
@@ -39,10 +45,39 @@ public class PostsListFragment extends ListFragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(View view, final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        final ArrayAdapter<Post> adapter = new ArrayAdapter<Post>(getContext(), android.R.layout.simple_expandable_list_item_1);
+        final ArrayAdapter<Post> adapter = new ArrayAdapter<Post>(getContext(), R.layout.post_item, R.id.post_item_textView){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+
+
+                View view = convertView;
+
+                if (view == null){
+                    view = getLayoutInflater(savedInstanceState).inflate(R.layout.post_item, parent, false);
+                }
+
+                ViewHolder viewHolder = (ViewHolder) view.getTag();
+                if (viewHolder == null){
+                    viewHolder = new ViewHolder(view);
+                    view.setTag(viewHolder);
+                }
+
+                Post post = getItem(position);
+
+                viewHolder.textView.setText(post.getCaption());
+
+                Glide.with(PostsListFragment.this)
+                        .load(post.getPhotos().get(0).getAltSizes().get(0).getUrl())
+                        .into(viewHolder.imageView);
+
+                return view;
+
+            }
+
+        };
         setEmptyText("List is empty");
 
         Call<PostsResponse> postsCall = api.getPosts(getArguments().getString(BLOG_NAME), 10, 0);
@@ -76,5 +111,15 @@ public class PostsListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
+    }
+
+    static class ViewHolder{
+        ImageView imageView;
+        TextView textView;
+
+        ViewHolder(View view){
+            imageView = (ImageView) view.findViewById(R.id.post_item_imageView);
+            textView = (TextView) view.findViewById(R.id.post_item_textView);
+        }
     }
 }
