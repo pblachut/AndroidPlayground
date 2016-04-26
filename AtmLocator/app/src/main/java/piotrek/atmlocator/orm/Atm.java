@@ -7,7 +7,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * Created by Admin on 2016-04-26.
  */
 
-@DatabaseTable(tableName = "atm")
+@DatabaseTable(tableName = "atm", daoClass = AtmDao.class)
 public class Atm {
     @DatabaseField(generatedId = true, columnName = Columns.ID)
     private int id;

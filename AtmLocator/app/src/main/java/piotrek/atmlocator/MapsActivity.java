@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import piotrek.atmlocator.orm.Atm;
+import piotrek.atmlocator.orm.AtmDao;
 import piotrek.atmlocator.orm.Bank;
 import piotrek.atmlocator.orm.BankDao;
 import piotrek.atmlocator.orm.DbHelper;
@@ -27,7 +28,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private final int REQUEST_CODE = 5;
     private GoogleMap mMap;
-    private Dao<Atm, Integer> atmDao;
+    private AtmDao atmDao;
     private BankDao bankDao;
 
     @Override
