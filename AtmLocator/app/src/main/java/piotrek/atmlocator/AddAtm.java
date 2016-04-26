@@ -59,18 +59,7 @@ public class AddAtm extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        ArrayAdapter<Bank> bankArrayAdapter = new ArrayAdapter<Bank>(this, android.R.layout.simple_expandable_list_item_1){
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-
-                //Bank item = getItem(position);
-
-                //TextView textView = (TextView) convertView;
-                //textView.setText(item.getName());
-
-                return super.getView(position, convertView, parent);
-            }
-        };
+        ArrayAdapter<Bank> bankArrayAdapter = new ArrayAdapter<Bank>(this, android.R.layout.simple_expandable_list_item_1);
 
         bankSpinner.setAdapter(bankArrayAdapter);
 

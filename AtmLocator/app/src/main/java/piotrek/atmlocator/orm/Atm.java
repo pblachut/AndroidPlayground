@@ -12,6 +12,8 @@ public class Atm {
     @DatabaseField(generatedId = true, columnName = Columns.ID)
     private int id;
 
+    // eager loading
+    //@DatabaseField(foreign = true, foreignAutoRefresh = true)
     @DatabaseField(foreign = true)
     private Bank bank;
     @DatabaseField(canBeNull = false)

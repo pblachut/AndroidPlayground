@@ -24,7 +24,7 @@ public class DbHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, Bank.class);
             TableUtils.createTable(connectionSource, Atm.class);
 
-            Dao<Bank, Integer> bankDao = getDao(Bank.class);
+            BankDao bankDao = getDao(Bank.class);
 
             Bank bank1 = new Bank("ING", "+4832323232");
             Bank bank2 = new Bank("PKO BP", "+4821212121");

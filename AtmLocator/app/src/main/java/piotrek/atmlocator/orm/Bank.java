@@ -3,7 +3,7 @@ package piotrek.atmlocator.orm;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-@DatabaseTable(tableName = "bank")
+@DatabaseTable(tableName = "bank", daoClass = BankDao.class)
 public class Bank {
 
     @DatabaseField(generatedId = true, columnName = Columns.ID)
@@ -14,6 +14,11 @@ public class Bank {
     private String phone;
 
     public Bank(){ }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 
     public Bank(String name, String phone){
         this();

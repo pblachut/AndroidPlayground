@@ -20,6 +20,7 @@ import java.util.List;
 
 import piotrek.atmlocator.orm.Atm;
 import piotrek.atmlocator.orm.Bank;
+import piotrek.atmlocator.orm.BankDao;
 import piotrek.atmlocator.orm.DbHelper;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -27,7 +28,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private final int REQUEST_CODE = 5;
     private GoogleMap mMap;
     private Dao<Atm, Integer> atmDao;
-    private Dao<Bank, Integer> bankDao;
+    private BankDao bankDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
