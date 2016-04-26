@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -15,10 +16,16 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
+import com.j256.ormlite.dao.Dao;
+
+import java.sql.SQLException;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import piotrek.atmlocator.orm.Bank;
+import piotrek.atmlocator.orm.DbHelper;
 
 public class AddAtm extends AppCompatActivity {
 
@@ -46,6 +53,20 @@ public class AddAtm extends AppCompatActivity {
         setContentView(R.layout.activity_add_atm);
 
         ButterKnife.bind(this);
+
+        ArrayAdapter<Bank> bankArrayAdapter = new ArrayAdapter<Bank>(this, android.R.layout.simple_expandable_list_item_1);
+
+        bankSpinner.setAdapter(bankArrayAdapter);
+
+        DbHelper dbHelper = new DbHelper(this);
+        try {
+            Dao<Bank, Integer> dao = dbHelper.getDao(Bank.class);
+            List<Bank> banks = dao.queryForAll();
+            bankArrayAdapter.addAll(banks);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 
