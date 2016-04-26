@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -24,6 +26,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import piotrek.atmlocator.orm.Atm;
 import piotrek.atmlocator.orm.Bank;
 import piotrek.atmlocator.orm.DbHelper;
 
@@ -33,6 +36,8 @@ public class AddAtm extends AppCompatActivity {
     private static final int REQUEST_PLACE_PICKER = 123;
     @Bind(R.id.longitudeId)
     TextView longitudeTextView;
+
+    DbHelper dbHelper;
 
     @Bind(R.id.latitudeId)
     TextView latitudeTextView;
@@ -54,11 +59,22 @@ public class AddAtm extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        ArrayAdapter<Bank> bankArrayAdapter = new ArrayAdapter<Bank>(this, android.R.layout.simple_expandable_list_item_1);
+        ArrayAdapter<Bank> bankArrayAdapter = new ArrayAdapter<Bank>(this, android.R.layout.simple_expandable_list_item_1){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+
+                //Bank item = getItem(position);
+
+                //TextView textView = (TextView) convertView;
+                //textView.setText(item.getName());
+
+                return super.getView(position, convertView, parent);
+            }
+        };
 
         bankSpinner.setAdapter(bankArrayAdapter);
 
-        DbHelper dbHelper = new DbHelper(this);
+        dbHelper = new DbHelper(this);
         try {
             Dao<Bank, Integer> dao = dbHelper.getDao(Bank.class);
             List<Bank> banks = dao.queryForAll();
@@ -72,7 +88,22 @@ public class AddAtm extends AppCompatActivity {
 
     @OnClick(R.id.saveButton)
     public void onSaveButtonClick() {
+        Atm atm = new Atm();
+        atm.setLatitude(latLng.latitude);
+        atm.setLongitude(latLng.longitude);
+        atm.setAddress(address);
+        atm.setBank((Bank) bankSpinner.getSelectedItem());
 
+        try {
+            Dao<Atm, Integer> dao = dbHelper.getDao(Atm.class);
+
+            dao.create(atm);
+            setResult(RESULT_OK);
+            finish();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @OnClick(R.id.picklocationButton)

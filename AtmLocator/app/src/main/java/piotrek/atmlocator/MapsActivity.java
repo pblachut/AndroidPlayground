@@ -13,11 +13,21 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.j256.ormlite.dao.Dao;
+
+import java.sql.SQLException;
+import java.util.List;
+
+import piotrek.atmlocator.orm.Atm;
+import piotrek.atmlocator.orm.Bank;
+import piotrek.atmlocator.orm.DbHelper;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private final int REQUEST_CODE = 5;
     private GoogleMap mMap;
+    private Dao<Atm, Integer> atmDao;
+    private Dao<Bank, Integer> bankDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +37,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        DbHelper dbHelper = new DbHelper(this);
+
+        try {
+            atmDao = dbHelper.getDao(Atm.class);
+            bankDao = dbHelper.getDao(Bank.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -43,10 +62,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        refreshMap();
+
     }
 
     @Override
@@ -76,6 +93,42 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (requestCode == REQUEST_CODE){
             Toast.makeText(this, "Result code " + resultCode, Toast.LENGTH_SHORT).show();
+            refreshMap();
         }
+    }
+
+    private void refreshMap(){
+
+        if (mMap != null){
+
+            mMap.getUiSettings().setZoomControlsEnabled(true);
+
+            try {
+                List<Atm> atms = atmDao.queryForAll();
+                for (Atm atm : atms) {
+                    bankDao.refresh(atm.getBank());
+
+                    addMarkerForAtm(atm);
+                }
+
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
+
+        }
+
+    }
+
+    private void addMarkerForAtm(Atm atm){
+        LatLng sydney = new LatLng(atm.getLatitude(), atm.getLongitude());
+        mMap.addMarker(new MarkerOptions()
+                .position(sydney)
+                .title(atm.getBank().getName())
+                .snippet(atm.getBank().getPhone()));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
     }
 }

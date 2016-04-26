@@ -21,6 +21,10 @@ public class Atm {
     @DatabaseField(canBeNull = false)
     private String address;
 
+    public Atm(){
+
+    }
+
     public int getId() {
         return id;
     }
