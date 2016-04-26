@@ -1,21 +1,44 @@
 package piotrek.atmlocator;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import butterknife.BindView;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.model.LatLng;
+
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class AddAtm extends AppCompatActivity {
 
 
-    @BindView(R.id.longitudeId)
+    private static final int REQUEST_PLACE_PICKER = 123;
+    @Bind(R.id.longitudeId)
     TextView longitudeTextView;
 
-    @BindView(R.id.latitudeId)
+    @Bind(R.id.latitudeId)
     TextView latitudeTextView;
+    @Bind(R.id.picklocationButton)
+    Button pickLocationButton;
+    @Bind(R.id.bankSpinner)
+    Spinner bankSpinner;
+    @Bind(R.id.saveButton)
+    Button saveButton;
+    private LatLng latLng;
+    private String name;
+    private String address;
+    private String phone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,12 +50,68 @@ public class AddAtm extends AppCompatActivity {
     }
 
     @OnClick(R.id.saveButton)
-    public void onSaveButtonClick(){
+    public void onSaveButtonClick() {
 
     }
-    @OnClick(R.id.picklocationButton)
-    public void onPickLoacationButtonClick(){
 
+    @OnClick(R.id.picklocationButton)
+    public void onPickLocationButtonClick() {
+        try {
+            PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
+            Intent intent = intentBuilder.build(AddAtm.this);
+            // Start the Intent by requesting a result, identified by a request code.
+            startActivityForResult(intent, REQUEST_PLACE_PICKER);
+
+            // Hide the pick option in the UI to prevent users from starting the picker
+            // multiple times.
+            // showPickAction(false);
+
+        } catch (GooglePlayServicesRepairableException e) {
+            GooglePlayServicesUtil
+                    .getErrorDialog(e.getConnectionStatusCode(), AddAtm.this, 0);
+        } catch (GooglePlayServicesNotAvailableException e) {
+            Toast.makeText(AddAtm.this, "Google Play Services is not available.",
+                    Toast.LENGTH_LONG)
+                    .show();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // BEGIN_INCLUDE(activity_result)
+        if (requestCode == REQUEST_PLACE_PICKER) {
+            // This result is from the PlacePicker dialog.
+
+            // Enable the picker option
+            //showPickAction(true);
+
+            if (resultCode == Activity.RESULT_OK) {
+                /* User has picked a place, extract data.
+                   Data is extracted from the returned intent by retrieving a Place object from
+                   the PlacePicker.
+                 */
+                final Place place = PlacePicker.getPlace(this, data);
+
+                /* A Place object contains details about that place, such as its name, address
+                and phone number. Extract the name, address, phone number, place ID and place types.
+                 */
+
+                latLng = place.getLatLng();
+                name = place.getName().toString();
+                address = place.getAddress().toString();
+                phone = place.getPhoneNumber().toString();
+
+                latitudeTextView.setText(String.valueOf(latLng.latitude));
+                longitudeTextView.setText(String.valueOf(latLng.longitude));
+            } else {
+                // User has not selected a place, hide the card.
+                //getCardStream().hideCard(CARD_DETAIL);
+            }
+
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+        // END_INCLUDE(activity_result)
     }
 
 }
