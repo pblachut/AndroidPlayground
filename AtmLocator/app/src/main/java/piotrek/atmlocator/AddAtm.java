@@ -23,11 +23,15 @@ import com.j256.ormlite.dao.Dao;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import piotrek.atmlocator.orm.Atm;
+import piotrek.atmlocator.orm.AtmDao;
 import piotrek.atmlocator.orm.Bank;
+import piotrek.atmlocator.orm.BankDao;
 import piotrek.atmlocator.orm.DbHelper;
 
 public class AddAtm extends AppCompatActivity {
@@ -36,9 +40,6 @@ public class AddAtm extends AppCompatActivity {
     private static final int REQUEST_PLACE_PICKER = 123;
     @Bind(R.id.longitudeId)
     TextView longitudeTextView;
-
-    DbHelper dbHelper;
-
     @Bind(R.id.latitudeId)
     TextView latitudeTextView;
     @Bind(R.id.picklocationButton)
@@ -52,10 +53,18 @@ public class AddAtm extends AppCompatActivity {
     private String address;
     private String phone;
 
+    @Inject
+    AtmDao atmDao;
+
+    @Inject
+    BankDao bankDao;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_atm);
+
+        AtmLocatorApplication.component.inject(this);
 
         ButterKnife.bind(this);
 
@@ -63,10 +72,8 @@ public class AddAtm extends AppCompatActivity {
 
         bankSpinner.setAdapter(bankArrayAdapter);
 
-        dbHelper = new DbHelper(this);
         try {
-            Dao<Bank, Integer> dao = dbHelper.getDao(Bank.class);
-            List<Bank> banks = dao.queryForAll();
+            List<Bank> banks = bankDao.queryForAll();
             bankArrayAdapter.addAll(banks);
 
         } catch (SQLException e) {
@@ -84,9 +91,9 @@ public class AddAtm extends AppCompatActivity {
         atm.setBank((Bank) bankSpinner.getSelectedItem());
 
         try {
-            Dao<Atm, Integer> dao = dbHelper.getDao(Atm.class);
 
-            dao.create(atm);
+
+            atmDao.create(atm);
             setResult(RESULT_OK);
             finish();
 

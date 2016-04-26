@@ -18,6 +18,8 @@ import com.j256.ormlite.dao.Dao;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import piotrek.atmlocator.orm.Atm;
 import piotrek.atmlocator.orm.AtmDao;
 import piotrek.atmlocator.orm.Bank;
@@ -28,8 +30,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private final int REQUEST_CODE = 5;
     private GoogleMap mMap;
-    private AtmDao atmDao;
-    private BankDao bankDao;
+
+    @Inject
+    AtmDao atmDao;
+
+    @Inject
+    BankDao bankDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +46,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        DbHelper dbHelper = new DbHelper(this);
-
-        try {
-            atmDao = dbHelper.getDao(Atm.class);
-            bankDao = dbHelper.getDao(Bank.class);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        AtmLocatorApplication.component.inject(this);
     }
 
 
