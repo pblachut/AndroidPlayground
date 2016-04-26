@@ -109,7 +109,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun addMarkerForAtm(atm: Atm) {
         val sydney = LatLng(atm.latitude, atm.longitude)
-        mMap?.addMarker(MarkerOptions().position(sydney).title(atm.bank.name).snippet(atm.bank.phone))
+        mMap?.addMarker(MarkerOptions().position(sydney).title(atm.bank?.name).snippet(atm.bank?.phone))
         mMap?.moveCamera(CameraUpdateFactory.newLatLng(sydney))
 
     }
