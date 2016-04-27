@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowToast;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -36,7 +37,7 @@ public class MainActivityTest {
     }
 
     @Test
-    public void should_be_possible_to_log_in() throws Exception {
+    public void should_be_possible_to_log_in_with_mocked_interactor() throws Exception {
         // prepare
         activity.usernameEditTextView.setText("username");
         activity.passwordEditTextView.setText("password");
@@ -48,5 +49,18 @@ public class MainActivityTest {
 
         // assert
         verify(activity.interactor).login("username", "password");
+    }
+
+    @Test
+    public void should_show_toast_on_too_short_username() throws Exception {
+        // prepare
+        activity.usernameEditTextView.setText("a");
+        activity.passwordEditTextView.setText("password");
+
+        // run
+        activity.loginButtton.performClick();
+
+        // assert
+        assertEquals("username_too_short", ShadowToast.getTextOfLatestToast());
     }
 }

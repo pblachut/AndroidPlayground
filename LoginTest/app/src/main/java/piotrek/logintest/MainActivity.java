@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements ILoginView {
         ILoginApi api = new ILoginApi() {
             @Override
             public String login(String username, String password) {
+                if (username != "username")
+                    return "username_too_short";
                 return "OK";
             }
         };

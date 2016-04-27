@@ -24,6 +24,9 @@ public class LoginManager implements ILoginInteractor{
         if ("OK".equals(result)){
             storage.storeUsername(username);
             this.username = username;
+        }else
+        {
+            view.showMessage(result);
         }
 
 
