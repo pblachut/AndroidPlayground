@@ -87,6 +87,6 @@ public class LoginManagerTests {
         when(api.login(anyString(), anyString()))
                 .thenReturn("OK");
 
-        sut = new LoginManager(credentialsStorage, api, view);
+        sut = new LoginManager(credentialsStorage, api);
     }
 }
