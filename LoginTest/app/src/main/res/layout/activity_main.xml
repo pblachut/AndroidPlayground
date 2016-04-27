@@ -9,8 +9,20 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="piotrek.logintest.MainActivity">
 
-    <TextView
+    <EditText
+        android:id="@+id/usernameEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!" />
+    <EditText
+        android:id="@+id/passwordEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello World!" />
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
 </RelativeLayout>
